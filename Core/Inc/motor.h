@@ -1,0 +1,52 @@
+/*
+ * stepper_motor.h
+ *
+ *  Created on: Jan 21, 2022
+ *      Author: fame
+ */
+
+#ifndef INC_MOTOR_H_
+#define INC_MOTOR_H_
+
+/*
+ * Include
+ */
+#include "stm32h7xx_hal.h"
+#include "math.h"
+/*
+ * STRUCT
+ */
+typedef struct {
+	/* TIM handle */
+	TIM_HandleTypeDef *timHandle;
+	GPIO_TypeDef *dir_port;
+	uint16_t dir_pin;
+} Stepper_Motor;
+
+typedef struct {
+	/* TIM handle */
+	TIM_HandleTypeDef *timHandle;
+} Servo_Motor;
+
+/*
+ * INITIALISATION
+ */
+void stepper_initialise(Stepper_Motor *dev,
+		TIM_HandleTypeDef *timHandle,
+		GPIO_TypeDef *dir_port,
+		uint16_t dir_pin);
+void servo_initialise(Servo_Motor *dev,
+		TIM_HandleTypeDef *timHandle);
+
+/*
+ * Driver FUNCTIONS
+ */
+
+void servo_set_degree(Servo_Motor *dev, uint8_t degree);
+void stepper_set_speed(Stepper_Motor *dev, double freq);
+/*
+ * LOW-LEVEL FUNCTIONS
+ */
+void set_pwm(TIM_HandleTypeDef TIM_pwm, double freq, float duty_cycle);
+
+#endif /* INC_MOTOR_H_ */
