@@ -16,17 +16,18 @@ typedef struct {
 	float Kd;
 
 	/* Output limits */
-	float limMin;
-	float limMax;
+	float lim_min;
+	float lim_max;
 
 	/* Integrator limits */
-	float limMinInt;
-	float limMaxInt;
+	float lim_int_max;
+	float lim_int_min;
 
 	/* Controller "memory" */
+	float proportional_term;
 	float integrator;
-	float prevError;			/* Required for integrator */
-	float differentiator;
+	float integral_term;
+	float derivative_term;
 	float prevMeasurement;		/* Required for differentiator */
 
 	/* Controller output */
