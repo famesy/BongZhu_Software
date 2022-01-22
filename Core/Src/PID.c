@@ -5,7 +5,9 @@
  *      Author: fame
  */
 
-void PIDController_Init(PIDController *pid, float Kp, float Ki, float Kd,
+#include "PID.h"
+
+void PIDController_initialise(PIDController *pid, float Kp, float Ki, float Kd,
 		float lim_min, float lim_max, float lim_int_min, float lim_int_max) {
 	/* Set Struct Variable */
 	pid->Kp = Kp;
@@ -25,7 +27,7 @@ void PIDController_Init(PIDController *pid, float Kp, float Ki, float Kd,
 	pid->out = 0.0;
 }
 
-float PIDController_Update(PIDController *pid, float setpoint, float measurement) {
+float PIDController_update(PIDController *pid, float setpoint, float measurement) {
 	float error = setpoint - measurement;
 	/*
 	 * P term

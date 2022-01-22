@@ -1,0 +1,2 @@
+AMT21.c:9:6:AMT21_read_value	16	static
+AMT21.c:18:19:AMT21_check_value	24	static

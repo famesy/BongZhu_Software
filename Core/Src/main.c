@@ -29,6 +29,7 @@
 /* USER CODE BEGIN Includes */
 #include "kinematic.h"
 #include "motor.h"
+#include "PID.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

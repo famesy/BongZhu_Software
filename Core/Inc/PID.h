@@ -35,4 +35,8 @@ typedef struct {
 
 } PIDController;
 
+void PIDController_initialise(PIDController *pid, float Kp, float Ki, float Kd,
+		float lim_min, float lim_max, float lim_int_min, float lim_int_max);
+float PIDController_update(PIDController *pid, float setpoint, float measurement);
+
 #endif /* INC_PID_H_ */
