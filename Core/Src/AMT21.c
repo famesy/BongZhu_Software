@@ -7,6 +7,12 @@
 #include "AMT21.h"
 
 void AMT21_read_value(AMT21 *dev){
+	/*
+	 AMT21_read_value does read raw data from encoder but you must use AMT21_check_value first.
+
+	 :param dev = AMT21 struct
+	 :return: None
+	 */
 	HAL_GPIO_WritePin(dev->DE_port, dev->DE_pin, 1);
 	HAL_UART_Transmit(dev->uartHandle, (uint8_t *) &(dev->address), sizeof(dev->address), 100);
 	HAL_GPIO_WritePin(dev->DE_port, dev->DE_pin, 0);
@@ -16,6 +22,14 @@ void AMT21_read_value(AMT21 *dev){
 }
 
 HAL_StatusTypeDef AMT21_check_value(AMT21 *dev){
+	/*
+	 AMT21_read_value does check correctness of your data then save to dev->position.
+
+	 :param dev = AMT21 struct
+	 :return: HAL_OK 	: if value is right
+	 	 	  HAL_ERROR : if value is wrong
+	 */
+	uint16_t position_temp = dev->uart_buf & 0x3FFF;
 	uint8_t k0_check = (dev->uart_buf & 0x0001);
 	uint8_t k1_check = (dev->uart_buf & 0x0002) >> 1;
 	for (uint8_t i = 0; i < 6; i++){
@@ -24,6 +38,7 @@ HAL_StatusTypeDef AMT21_check_value(AMT21 *dev){
 		k1_check ^= (dev->uart_buf >> 1) & 0x0001;
 	}
 	if ((dev->k0 == k0_check) && (dev->k1 == k1_check)){
+		dev->position = position_temp;
 		return HAL_OK;
 	}
 	else {

@@ -5,20 +5,21 @@
  *      Author: fame
  */
 
+#include "motor.h"
+
 void stepper_initialise(Stepper_Motor *dev, TIM_HandleTypeDef *timHandle,
-		GPIO_TypeDef *dirPort, uint16_t dirPin) {
+		GPIO_TypeDef *dir_port, uint16_t dir_pin) {
 
 	/* Set struct parameters */
 	dev->timHandle = timHandle;
-	dev->dirPort = dirPort;
-	dev->dirPin = dirPin;
-	HAL_GPIO_WritePin(dev->dirPort, dev->dirPin, 0);
-	if (timHandle == TIM15) {
+	dev->dir_port = dir_port;
+	dev->dir_pin = dir_pin;
+	HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 0);
+	if (timHandle->Instance == TIM15) {
 		HAL_TIM_PWM_Start(dev->timHandle, TIM_CHANNEL_2);
 	} else {
 		HAL_TIM_PWM_Start(dev->timHandle, TIM_CHANNEL_1);
 	}
-	return HAL_OK;
 }
 
 void servo_initialise(Servo_Motor *dev, TIM_HandleTypeDef *timHandle) {
@@ -27,7 +28,7 @@ void servo_initialise(Servo_Motor *dev, TIM_HandleTypeDef *timHandle) {
 	HAL_TIM_PWM_Start(dev->timHandle, TIM_CHANNEL_1);
 }
 
-void set_pwm(TIM_HandleTypeDef TIM_pwm, double freq, float duty_cycle) {
+void set_pwm(TIM_HandleTypeDef *TIM_pwm, double freq, float duty_cycle) {
 	/*
 	 set_pwm does set pwm timer to your specific value.
 
@@ -37,11 +38,11 @@ void set_pwm(TIM_HandleTypeDef TIM_pwm, double freq, float duty_cycle) {
 	 */
 	uint16_t ARR_value = 1000000 / freq; //1000000 come from 275MHz/275
 	uint16_t CCRx_value = ARR_value * duty_cycle;
-	TIM_pwm->ARR = ARR_value;
-	if (TIM_pwm == TIM15) {
-		TIM_pwm->CCR2 = CCRx_value;
+	TIM_pwm->Instance->ARR = ARR_value;
+	if (TIM_pwm->Instance == TIM15) {
+		TIM_pwm->Instance->CCR2 = CCRx_value;
 	} else {
-		TIM_pwm->CCR1 = CCRx_value;
+		TIM_pwm->Instance->CCR1 = CCRx_value;
 	}
 }
 
@@ -52,10 +53,13 @@ void servo_set_degree(Servo_Motor *dev, uint8_t degree) {
 	 :param degree is degree of servo motor (0-180)
 	 :return: None
 	 */
-	if (deg > 180) {
-		deg = 180;
+	if (degree > 180) {
+		degree = 180;
 	}
-	float cyc = (deg / 180.0) * 0.2;
+	else if (degree < 0){
+		degree = 0;
+	}
+	float cyc = (degree / 180.0) * 0.2;
 	set_pwm(dev->timHandle, 50, cyc);
 }
 

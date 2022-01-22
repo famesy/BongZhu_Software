@@ -147,6 +147,7 @@ int main(void)
   {
 	  if (control_en) {
 
+		  control_en = 0;
 	  }
     /* USER CODE END WHILE */
 
@@ -243,7 +244,13 @@ void PeriphCommonClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim == &htim24)
+	{
+		control_en = 1;
+	}
+}
 /* USER CODE END 4 */
 
 /**

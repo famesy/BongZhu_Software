@@ -47,6 +47,6 @@ void stepper_set_speed(Stepper_Motor *dev, double freq);
 /*
  * LOW-LEVEL FUNCTIONS
  */
-void set_pwm(TIM_HandleTypeDef TIM_pwm, double freq, float duty_cycle);
+void set_pwm(TIM_HandleTypeDef *TIM_pwm, double freq, float duty_cycle);
 
 #endif /* INC_MOTOR_H_ */
