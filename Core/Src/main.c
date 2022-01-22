@@ -29,6 +29,7 @@
 /* USER CODE BEGIN Includes */
 #include "kinematic.h"
 #include "motor.h"
+#include "AMT21.h"
 #include "PID.h"
 /* USER CODE END Includes */
 
@@ -56,6 +57,17 @@
 void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
 /* USER CODE BEGIN PFP */
+
+/*
+ * printf
+ */
+#ifdef __GNUC__
+/* With GCC, small printf (option LD Linker->Libraries->Small printf
+ set to 'Yes') calls __io_putchar() */
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
 
 /* USER CODE END PFP */
 
@@ -132,6 +144,18 @@ int main(void)
   stepper_initialise(&stepper_3, &htim14, DIR3_GPIO_Port, DIR3_Pin);
   stepper_initialise(&stepper_4, &htim15, DIR4_GPIO_Port, DIR4_Pin);
   stepper_initialise(&stepper_5, &htim16, DIR5_GPIO_Port, DIR5_Pin);
+
+  AMT21 encoder_1;
+  AMT21 encoder_2;
+  AMT21 encoder_3;
+  AMT21 encoder_4;
+  AMT21 encoder_5;
+  AMT21 encoders[5] = {encoder_1, encoder_2, encoder_3, encoder_4, encoder_5};
+  AMT21_initialise(&encoder_1, &huart2, 0x2C , USART2_DE_GPIO_Port, USART2_DE_Pin);
+  AMT21_initialise(&encoder_2, &huart2, 0x34 , USART2_DE_GPIO_Port, USART2_DE_Pin);
+  AMT21_initialise(&encoder_3, &huart2, 0x4c , USART2_DE_GPIO_Port, USART2_DE_Pin);
+  AMT21_initialise(&encoder_4, &huart2, 0x5C , USART2_DE_GPIO_Port, USART2_DE_Pin);
+  AMT21_initialise(&encoder_5, &huart2, 0x78 , USART2_DE_GPIO_Port, USART2_DE_Pin);
   servo_initialise(&servo_gripper, &htim17);
   servo_set_degree(&servo_gripper, 90);
   /*
@@ -145,9 +169,24 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  if (control_en) {
-
-		  control_en = 0;
+	  /*
+	   * TEST ENCODER
+	   */
+	  for (int i = 0; i<5; i++){
+		  /*
+		   * REAL CASE
+		   */
+//		  HAL_StatusTypeDef encoder_correct = HAL_ERROR;
+//		  while (encoder_correct == HAL_ERROR){
+//			  AMT21_read_value(&(encoders[i]));
+//			  AMT21_check_value(&(encoders[i]));
+//		  }
+		  /*
+		   * TEST CASE
+		   */
+		  AMT21_read_value(&(encoders[i]));
+		  AMT21_check_value(&(encoders[i]));
+		  printf("%d\n", encoders[i].position);
 	  }
     /* USER CODE END WHILE */
 
@@ -244,6 +283,15 @@ void PeriphCommonClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+PUTCHAR_PROTOTYPE {
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart3, (uint8_t *) &ch, 1, 1);
+
+  return ch;
+}
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if (htim == &htim24)
