@@ -51,6 +51,9 @@ float PIDController_Update(PIDController *pid, float setpoint, float measurement
 	 */
 	pid->derivative_term = pid->Kd * (measurement - pid->prevMeasurement);
 	pid->prevMeasurement = measurement;
+	/*
+	 * Calculate a final value
+	 */
 	pid->out = pid->proportional_term + pid->integral_term + pid->derivative_term;
 	return pid->out;
 }
