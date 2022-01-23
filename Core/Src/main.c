@@ -30,6 +30,7 @@
 #include "kinematic.h"
 #include "motor.h"
 #include "AMT21.h"
+#include "stdio.h"
 #include "PID.h"
 /* USER CODE END Includes */
 
@@ -151,27 +152,40 @@ int main(void)
   AMT21 encoder_4;
   AMT21 encoder_5;
   AMT21 encoders[5] = {encoder_1, encoder_2, encoder_3, encoder_4, encoder_5};
-  AMT21_initialise(&encoder_1, &huart2, 0x2C , USART2_DE_GPIO_Port, USART2_DE_Pin);
-  AMT21_initialise(&encoder_2, &huart2, 0x34 , USART2_DE_GPIO_Port, USART2_DE_Pin);
-  AMT21_initialise(&encoder_3, &huart2, 0x4c , USART2_DE_GPIO_Port, USART2_DE_Pin);
-  AMT21_initialise(&encoder_4, &huart2, 0x5C , USART2_DE_GPIO_Port, USART2_DE_Pin);
-  AMT21_initialise(&encoder_5, &huart2, 0x78 , USART2_DE_GPIO_Port, USART2_DE_Pin);
+  AMT21_initialise(&encoder_1, &huart2, 0xDC , USART2_DE_GPIO_Port, USART2_DE_Pin);
+  AMT21_initialise(&encoder_2, &huart2, 0x70 , USART2_DE_GPIO_Port, USART2_DE_Pin);
+  AMT21_initialise(&encoder_3, &huart2, 0x54 , USART2_DE_GPIO_Port, USART2_DE_Pin);
+  AMT21_initialise(&encoder_4, &huart2, 0xE8 , USART2_DE_GPIO_Port, USART2_DE_Pin);
+  AMT21_initialise(&encoder_5, &huart2, 0xB4 , USART2_DE_GPIO_Port, USART2_DE_Pin);
   servo_initialise(&servo_gripper, &htim17);
   servo_set_degree(&servo_gripper, 90);
   /*
    * HAL Start Timer
    */
   HAL_TIM_Base_Start_IT(&htim24);
-
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
+  printf("Test\n");
+  uint8_t enc_addr[5] = {0xDC, 0x70, 0x54, 0xE8, 0xB4};
+  uint16_t abs_position = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  /*
-	   * TEST ENCODER
-	   */
+//	  for (int i = 0;i < 5; i++){
+//		  abs_position = 0;
+//		HAL_GPIO_WritePin(USART2_DE_GPIO_Port, USART2_DE_Pin, 1);
+//		HAL_UART_Transmit(&huart2, &enc_addr[i], sizeof(enc_addr[i]), 1000);
+//		HAL_GPIO_WritePin(USART2_DE_GPIO_Port, USART2_DE_Pin, 0);
+//		HAL_UART_Receive(&huart2, (uint8_t *) &abs_position, 2, 1000);
+//		abs_position = abs_position & 0x3FFF;
+//		printf("encoder no.%x = %d\n",i+1,abs_position);
+//		HAL_Delay(500);
+//	  }
+//	  /*
+//	   * TEST ENCODER
+//	   */
 	  for (int i = 0; i<5; i++){
 		  /*
 		   * REAL CASE
@@ -185,8 +199,14 @@ int main(void)
 		   * TEST CASE
 		   */
 		  AMT21_read_value(&(encoders[i]));
-		  AMT21_check_value(&(encoders[i]));
-		  printf("%d\n", encoders[i].position);
+		  HAL_StatusTypeDef status = AMT21_check_value(&(encoders[i]));
+		  if (status == HAL_OK){
+			  printf("encoder no.%d = %d\n", i, encoders[i].uart_buf);
+		  }
+		  else {
+			  printf("check sum fail!\n");
+		  }
+		  HAL_Delay(100);
 	  }
     /* USER CODE END WHILE */
 
