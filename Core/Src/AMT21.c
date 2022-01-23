@@ -44,8 +44,8 @@ HAL_StatusTypeDef AMT21_check_value(AMT21 *dev) {
 	 HAL_ERROR : if value is wrong
 	 */
 	uint16_t position_temp = dev->uart_buf & 0x3FFF;
-	uint8_t k0_check = (dev->uart_buf >> 14) & 0x0001;
-	uint8_t k1_check = (dev->uart_buf >> 15) & 0x0001;
+	uint8_t k0_check = dev->uart_buf & 0x0001;
+	uint8_t k1_check = (dev->uart_buf >> 1) & 0x0001;
 	for (uint8_t i = 0; i < 6; i++) {
 		dev->uart_buf = dev->uart_buf >> 2;
 		k0_check ^= dev->uart_buf & 0x0001;

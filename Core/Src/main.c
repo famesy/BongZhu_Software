@@ -164,49 +164,24 @@ int main(void)
    */
   HAL_TIM_Base_Start_IT(&htim24);
   HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, 1);
-  printf("Test\n");
-  uint8_t enc_addr[5] = {0xDC, 0x70, 0x54, 0xE8, 0xB4};
-  uint16_t abs_position = 0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//	  for (int i = 0;i < 5; i++){
-//		  abs_position = 0;
-//		HAL_GPIO_WritePin(USART2_DE_GPIO_Port, USART2_DE_Pin, 1);
-//		HAL_UART_Transmit(&huart2, &enc_addr[i], sizeof(enc_addr[i]), 1000);
-//		HAL_GPIO_WritePin(USART2_DE_GPIO_Port, USART2_DE_Pin, 0);
-//		HAL_UART_Receive(&huart2, (uint8_t *) &abs_position, 2, 1000);
-//		abs_position = abs_position & 0x3FFF;
-//		printf("encoder no.%x = %d\n",i+1,abs_position);
-//		HAL_Delay(500);
-//	  }
-//	  /*
-//	   * TEST ENCODER
-//	   */
+	  /*
+	   * TEST ENCODER
+	   */
 	  for (int i = 0; i<5; i++){
-		  /*
-		   * REAL CASE
-		   */
-//		  HAL_StatusTypeDef encoder_correct = HAL_ERROR;
-//		  while (encoder_correct == HAL_ERROR){
-//			  AMT21_read_value(&(encoders[i]));
-//			  AMT21_check_value(&(encoders[i]));
-//		  }
-		  /*
-		   * TEST CASE
-		   */
-		  AMT21_read_value(&(encoders[i]));
-		  HAL_StatusTypeDef status = AMT21_check_value(&(encoders[i]));
-		  if (status == HAL_OK){
-			  printf("encoder no.%d = %d\n", i, encoders[i].uart_buf);
+		  HAL_StatusTypeDef encoder_correct = HAL_ERROR;
+		  while (encoder_correct == HAL_ERROR){
+			  AMT21_read_value(&(encoders[i]));
+			  AMT21_check_value(&(encoders[i]));
 		  }
-		  else {
-			  printf("check sum fail!\n");
-		  }
-		  HAL_Delay(100);
+	  }
+	  for (int i = 0; i<5; i++){
+		  printf("encoder %d \n", encoders[i].position);
 	  }
     /* USER CODE END WHILE */
 
