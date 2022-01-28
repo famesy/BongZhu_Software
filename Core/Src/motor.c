@@ -8,27 +8,30 @@
 #include "motor.h"
 
 void stepper_initialise(Stepper_Motor *dev, TIM_HandleTypeDef *timHandle,
-		GPIO_TypeDef *dir_port, uint16_t dir_pin) {
+		uint32_t tim_channel, GPIO_TypeDef *dir_port, uint16_t dir_pin) {
 
 	/* Set struct parameters */
 	dev->timHandle = timHandle;
+	dev->tim_channel = tim_channel;
 	dev->dir_port = dir_port;
 	dev->dir_pin = dir_pin;
 	HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 0);
-	if (timHandle->Instance == TIM15) {
-		HAL_TIM_PWM_Start(dev->timHandle, TIM_CHANNEL_2);
-	} else {
-		HAL_TIM_PWM_Start(dev->timHandle, TIM_CHANNEL_1);
-	}
+	HAL_TIM_PWM_Start(dev->timHandle, dev->tim_channel);
+	dev->freq = 1;
+	stepper_set_speed(dev, 0);
 }
 
-void servo_initialise(Servo_Motor *dev, TIM_HandleTypeDef *timHandle) {
+void servo_initialise(Servo_Motor *dev, TIM_HandleTypeDef *timHandle,uint32_t tim_channel) {
 	/* Set struct parameters */
 	dev->timHandle = timHandle;
-	HAL_TIM_PWM_Start(dev->timHandle, TIM_CHANNEL_1);
+	dev->tim_channel = tim_channel;
+	HAL_TIM_PWM_Start(dev->timHandle, dev->tim_channel);
+	dev->degree = 1;
+	servo_set_degree(dev, 0);
 }
 
-void set_pwm(TIM_HandleTypeDef *TIM_pwm, double freq, float duty_cycle) {
+void set_pwm(TIM_HandleTypeDef *tim_pwm, uint32_t tim_channel, float freq,
+		float duty_cycle) {
 	/*
 	 set_pwm does set pwm timer to your specific value.
 
@@ -36,14 +39,19 @@ void set_pwm(TIM_HandleTypeDef *TIM_pwm, double freq, float duty_cycle) {
 	 :param duty_cycle is % duty cycle 0.0 - 1.0
 	 :return: None
 	 */
-	uint16_t ARR_value = 1000000 / freq; //1000000 come from 275MHz/275
-	uint16_t CCRx_value = ARR_value * duty_cycle;
-	TIM_pwm->Instance->ARR = ARR_value;
-	if (TIM_pwm->Instance == TIM15) {
-		TIM_pwm->Instance->CCR2 = CCRx_value;
-	} else {
-		TIM_pwm->Instance->CCR1 = CCRx_value;
+	if (freq < MIN_FREQUENCY){
+		freq = MIN_FREQUENCY;
 	}
+	else if (freq > MAX_FREQUENCY){
+		freq = MAX_FREQUENCY;
+	}
+	uint16_t ARR_value = 500000 / freq; //500000 come from 275MHz/550
+	uint16_t CCRx_value = (ARR_value * duty_cycle);
+	if (duty_cycle == 1.0) {
+		CCRx_value = 0;
+	}
+	__HAL_TIM_SET_AUTORELOAD(tim_pwm, ARR_value);
+	__HAL_TIM_SET_COMPARE(tim_pwm, tim_channel, CCRx_value);
 }
 
 void servo_set_degree(Servo_Motor *dev, uint8_t degree) {
@@ -53,30 +61,35 @@ void servo_set_degree(Servo_Motor *dev, uint8_t degree) {
 	 :param degree is degree of servo motor (0-180)
 	 :return: None
 	 */
-	if (degree > 180) {
-		degree = 180;
+	if (degree != dev->degree) {
+		if (degree > 180) {
+			degree = 180.0;
+		} else if (degree < 0) {
+			degree = 0.0;
+		}
+		float cyc = 0.05 + ((degree / 180.0) * 0.05);
+		set_pwm(dev->timHandle, dev->tim_channel, 50, cyc);
+		dev->degree = degree;
 	}
-	else if (degree < 0){
-		degree = 0;
-	}
-	float cyc = (degree / 180.0) * 0.2;
-	set_pwm(dev->timHandle, 50, cyc);
 }
 
-void stepper_set_speed(Stepper_Motor *dev, double freq) {
+void stepper_set_speed(Stepper_Motor *dev, float freq) {
 	/*
 	 stepper_set_speed does set your stepper to your given value.
 
 	 :param freq can be -9999.9999 to 9999.9999. signed value use to set stepper direction.
 	 :return: None
 	 */
-	if (freq > 0) {
-		HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 1);
-		set_pwm(dev->timHandle, fabs(freq), 0.50);
-	} else if (freq < 0) {
-		HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 0);
-		set_pwm(dev->timHandle, fabs(freq), 0.50);
-	} else {
-		set_pwm(dev->timHandle, 100, 100.0);
+	if (freq != dev->freq) {
+		if (freq > 0) {
+			HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 0);
+			set_pwm(dev->timHandle, dev->tim_channel, freq, 0.50);
+		} else if (freq < 0) {
+			HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 1);
+			set_pwm(dev->timHandle, dev->tim_channel, (-1*freq), 0.50);
+		} else {
+			set_pwm(dev->timHandle, dev->tim_channel, 100, 1.0);
+		}
+		dev->freq = freq;
 	}
 }

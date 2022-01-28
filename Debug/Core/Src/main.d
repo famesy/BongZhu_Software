@@ -39,7 +39,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Core/Inc/adc.h ../Core/Inc/main.h ../Core/Inc/dma.h ../Core/Inc/spi.h \
  ../Core/Inc/tim.h ../Core/Inc/usart.h ../Core/Inc/gpio.h \
  ../Core/Inc/kinematic.h ../Core/Inc/motor.h ../Core/Inc/AMT21.h \
- ../Core/Inc/PID.h
+ ../Core/Inc/PID.h ../Core/Inc/KalmanFilter.h
 
 ../Core/Inc/main.h:
 
@@ -138,3 +138,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/AMT21.h:
 
 ../Core/Inc/PID.h:
+
+../Core/Inc/KalmanFilter.h:

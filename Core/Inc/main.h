@@ -57,26 +57,16 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define SPI4_SS1_Pin GPIO_PIN_3
-#define SPI4_SS1_GPIO_Port GPIOE
-#define SPI4_SS2_Pin GPIO_PIN_4
-#define SPI4_SS2_GPIO_Port GPIOE
-#define SPI4_SS3_Pin GPIO_PIN_13
-#define SPI4_SS3_GPIO_Port GPIOC
-#define SPI4_SS4_Pin GPIO_PIN_14
-#define SPI4_SS4_GPIO_Port GPIOC
-#define SPI4_SS5_Pin GPIO_PIN_15
-#define SPI4_SS5_GPIO_Port GPIOC
-#define DIR1_Pin GPIO_PIN_5
-#define DIR1_GPIO_Port GPIOC
-#define DIR2_Pin GPIO_PIN_0
-#define DIR2_GPIO_Port GPIOB
-#define DIR3_Pin GPIO_PIN_1
-#define DIR3_GPIO_Port GPIOB
-#define DIR4_Pin GPIO_PIN_2
-#define DIR4_GPIO_Port GPIOB
-#define DIR5_Pin GPIO_PIN_7
-#define DIR5_GPIO_Port GPIOE
+#define DIR1_Pin GPIO_PIN_3
+#define DIR1_GPIO_Port GPIOE
+#define DIR2_Pin GPIO_PIN_4
+#define DIR2_GPIO_Port GPIOE
+#define DIR3_Pin GPIO_PIN_13
+#define DIR3_GPIO_Port GPIOC
+#define DIR4_Pin GPIO_PIN_14
+#define DIR4_GPIO_Port GPIOC
+#define DIR5_Pin GPIO_PIN_15
+#define DIR5_GPIO_Port GPIOC
 #define OE_Pin GPIO_PIN_8
 #define OE_GPIO_Port GPIOE
 #define UART4_DE_Pin GPIO_PIN_15

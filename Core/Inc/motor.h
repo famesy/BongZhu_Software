@@ -13,40 +13,53 @@
  */
 #include "stm32h7xx_hal.h"
 #include "math.h"
+
+/*
+ * Define
+ */
+
+#define MIN_FREQUENCY 8.0
+#define MAX_FREQUENCY 500000.0
+
 /*
  * STRUCT
  */
 typedef struct {
 	/* TIM handle */
 	TIM_HandleTypeDef *timHandle;
+	uint32_t tim_channel;
 	GPIO_TypeDef *dir_port;
 	uint16_t dir_pin;
+	/* memory */
+	uint8_t freq;
+	uint8_t duty_cycle;
 } Stepper_Motor;
 
 typedef struct {
 	/* TIM handle */
 	TIM_HandleTypeDef *timHandle;
+	uint32_t tim_channel;
+	/* memory */
+	uint8_t degree;
 } Servo_Motor;
 
 /*
  * INITIALISATION
  */
-void stepper_initialise(Stepper_Motor *dev,
-		TIM_HandleTypeDef *timHandle,
-		GPIO_TypeDef *dir_port,
-		uint16_t dir_pin);
-void servo_initialise(Servo_Motor *dev,
-		TIM_HandleTypeDef *timHandle);
+void stepper_initialise(Stepper_Motor *dev, TIM_HandleTypeDef *timHandle,
+		uint32_t tim_channel, GPIO_TypeDef *dir_port, uint16_t dir_pin);
+void servo_initialise(Servo_Motor *dev, TIM_HandleTypeDef *timHandle,
+		uint32_t tim_channel);
 
 /*
  * Driver FUNCTIONS
  */
 
 void servo_set_degree(Servo_Motor *dev, uint8_t degree);
-void stepper_set_speed(Stepper_Motor *dev, double freq);
+void stepper_set_speed(Stepper_Motor *dev, float freq);
 /*
  * LOW-LEVEL FUNCTIONS
  */
-void set_pwm(TIM_HandleTypeDef *TIM_pwm, double freq, float duty_cycle);
+void set_pwm(TIM_HandleTypeDef *tim_pwm, uint32_t tim_channel, float freq, float duty_cycle);
 
 #endif /* INC_MOTOR_H_ */

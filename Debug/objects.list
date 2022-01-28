@@ -1,4 +1,5 @@
 "./Core/Src/AMT21.o"
+"./Core/Src/KalmanFilter.o"
 "./Core/Src/PID.o"
 "./Core/Src/adc.o"
 "./Core/Src/dma.o"
