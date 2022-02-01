@@ -1,2 +1,2 @@
 KalmanFilter.c:9:6:KalmanFilter_Init	48	static
-KalmanFilter.c:23:6:KalmanFilter_Update	56	static
+KalmanFilter.c:23:6:KalmanFilter_Update	64	static

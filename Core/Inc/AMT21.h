@@ -13,6 +13,13 @@
  */
 #include "stm32h7xx_hal.h"
 #include "stdint.h"
+
+/*
+ * Define
+ */
+#define AMT21_SET_ZERO 0x75
+
+
 /*
  * STRUCT
  */

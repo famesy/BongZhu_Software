@@ -176,10 +176,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
   /* USER CODE END ADC3_MspInit 0 */
     /* ADC3 clock enable */
     __HAL_RCC_ADC3_CLK_ENABLE();
-
-    /* ADC3 interrupt Init */
-    HAL_NVIC_SetPriority(ADC3_IRQn, 0, 0);
-    HAL_NVIC_EnableIRQ(ADC3_IRQn);
   /* USER CODE BEGIN ADC3_MspInit 1 */
 
   /* USER CODE END ADC3_MspInit 1 */
@@ -213,9 +209,6 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
   /* USER CODE END ADC3_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_ADC3_CLK_DISABLE();
-
-    /* ADC3 interrupt Deinit */
-    HAL_NVIC_DisableIRQ(ADC3_IRQn);
   /* USER CODE BEGIN ADC3_MspDeInit 1 */
 
   /* USER CODE END ADC3_MspDeInit 1 */

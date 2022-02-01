@@ -45,7 +45,7 @@ void AMT21_set_zero(AMT21 *dev) {
 	 :param dev = AMT21 struct
 	 :return: None
 	 */
-	uint8_t set_zero_command[2] = {(dev->address + 0x02), 0x5E};
+	uint8_t set_zero_command[2] = {(dev->address + 0x02), AMT21_SET_ZERO};
  	HAL_GPIO_WritePin(dev->DE_port, dev->DE_pin, 1);
 	HAL_UART_Transmit(dev->uartHandle, (uint8_t*) set_zero_command,
 			sizeof(set_zero_command), 100);
@@ -55,7 +55,6 @@ void AMT21_set_zero(AMT21 *dev) {
 void AMT21_reset(AMT21 *dev) {
 	/*
 	 AMT21_set_zero does reset encoder.
-
 	 :param dev = AMT21 struct
 	 :return: None
 	 */
@@ -85,7 +84,6 @@ HAL_StatusTypeDef AMT21_check_value(AMT21 *dev) {
 	k0_check = !k0_check;
 	k1_check = !k1_check;
 	if ((dev->k0 == k0_check) && (dev->k1 == k1_check)) {
-		dev->prev_position = dev->position;
 		dev->position = position_temp;
 		return HAL_OK;
 	} else {
@@ -96,9 +94,9 @@ HAL_StatusTypeDef AMT21_check_value(AMT21 *dev) {
 int32_t AMT21_unwrap(int32_t pulse, int32_t prev_pulse) {
 	int32_t dPulse = 0;
 	if (pulse - prev_pulse > 8191) {
-		dPulse = -(16382 - ( pulse -  prev_pulse));
+		dPulse = -(16383 - (pulse-prev_pulse));
 	} else if ( pulse -  prev_pulse < -8191) {
-		dPulse = (16382 + ( pulse -  prev_pulse));
+		dPulse = 16383 - (prev_pulse - pulse);
 	} else {
 		dPulse =  pulse -  prev_pulse;
 	}

@@ -55,7 +55,6 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern ADC_HandleTypeDef hadc3;
 extern TIM_HandleTypeDef htim24;
 extern DMA_HandleTypeDef hdma_usart2_rx;
 /* USER CODE BEGIN EV */
@@ -213,20 +212,6 @@ void DMA1_Stream0_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Stream0_IRQn 1 */
 
   /* USER CODE END DMA1_Stream0_IRQn 1 */
-}
-
-/**
-  * @brief This function handles ADC3 global interrupt.
-  */
-void ADC3_IRQHandler(void)
-{
-  /* USER CODE BEGIN ADC3_IRQn 0 */
-
-  /* USER CODE END ADC3_IRQn 0 */
-  HAL_ADC_IRQHandler(&hadc3);
-  /* USER CODE BEGIN ADC3_IRQn 1 */
-
-  /* USER CODE END ADC3_IRQn 1 */
 }
 
 /**
