@@ -1,5 +1,5 @@
 motor.c:10:6:stepper_initialise	24	static
-motor.c:24:6:servo_initialise	24	static
-motor.c:33:6:set_pwm	32	static
-motor.c:57:6:servo_set_degree	24	static
-motor.c:76:6:stepper_set_speed	24	static
+motor.c:28:6:servo_initialise	24	static
+motor.c:37:6:set_pwm	32	static
+motor.c:61:6:servo_set_degree	24	static
+motor.c:80:6:stepper_set_speed	24	static

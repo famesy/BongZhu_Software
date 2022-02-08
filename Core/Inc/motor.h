@@ -33,6 +33,7 @@ typedef struct {
 	/* memory */
 	uint8_t freq;
 	uint8_t duty_cycle;
+	uint8_t dir_mode;
 } Stepper_Motor;
 
 typedef struct {
@@ -47,7 +48,7 @@ typedef struct {
  * INITIALISATION
  */
 void stepper_initialise(Stepper_Motor *dev, TIM_HandleTypeDef *timHandle,
-		uint32_t tim_channel, GPIO_TypeDef *dir_port, uint16_t dir_pin);
+		uint32_t tim_channel, GPIO_TypeDef *dir_port, uint16_t dir_pin, uint8_t dir_mode);
 void servo_initialise(Servo_Motor *dev, TIM_HandleTypeDef *timHandle,
 		uint32_t tim_channel);
 

@@ -9,7 +9,7 @@
 #define INC_KALMANFILTER_H_
 
 
-#define DT 0.01//(1/100)
+#define DT 0.002
 
 typedef struct {
 	/* Parameter */

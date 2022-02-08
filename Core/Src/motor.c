@@ -8,13 +8,17 @@
 #include "motor.h"
 
 void stepper_initialise(Stepper_Motor *dev, TIM_HandleTypeDef *timHandle,
-		uint32_t tim_channel, GPIO_TypeDef *dir_port, uint16_t dir_pin) {
+		uint32_t tim_channel, GPIO_TypeDef *dir_port, uint16_t dir_pin, uint8_t dir_mode) {
 
 	/* Set struct parameters */
 	dev->timHandle = timHandle;
 	dev->tim_channel = tim_channel;
 	dev->dir_port = dir_port;
 	dev->dir_pin = dir_pin;
+	/*
+	 * dir mode set direction of stepper
+	 */
+	dev->dir_mode = dir_mode;
 	HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 0);
 	HAL_TIM_PWM_Start(dev->timHandle, dev->tim_channel);
 	dev->freq = 1;
@@ -81,11 +85,21 @@ void stepper_set_speed(Stepper_Motor *dev, float freq) {
 	 :return: None
 	 */
 	if (freq != dev->freq) {
-		if (freq > 0) {
-			HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 0);
+		if (freq > MIN_FREQUENCY) {
+			if (dev->dir_mode == 0){
+				HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 0);
+			}
+			else if (dev->dir_mode == 1){
+				HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 1);
+			}
 			set_pwm(dev->timHandle, dev->tim_channel, freq, 0.50);
-		} else if (freq < 0) {
-			HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 1);
+		} else if (freq < (-1 * MIN_FREQUENCY)) {
+			if (dev->dir_mode == 0){
+				HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 1);
+			}
+			else if (dev->dir_mode == 1){
+				HAL_GPIO_WritePin(dev->dir_port, dev->dir_pin, 0);
+			}
 			set_pwm(dev->timHandle, dev->tim_channel, (-1*freq), 0.50);
 		} else {
 			set_pwm(dev->timHandle, dev->tim_channel, 100, 1.0);
